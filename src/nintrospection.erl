@@ -28,27 +28,24 @@ do(AppName, IntrospectionPoint, Args) ->
     Points = persistent_term:get(?PERSISTENT_TERM_KEY(AppName, IntrospectionPoint), []),
     do(Points, Args).
 
-
 register_point(AppName, IntrospectionPoint, Fun) when is_function(Fun) ->
-  do_register_point(AppName, IntrospectionPoint, Fun);
+    do_register_point(AppName, IntrospectionPoint, Fun);
 register_point(AppName, IntrospectionPoint, {M, F} = Fun) when is_atom(M), is_atom(F) ->
-  do_register_point(AppName, IntrospectionPoint, Fun);
+    do_register_point(AppName, IntrospectionPoint, Fun);
 register_point(_AppName, _IntrospectionPoint, Other) ->
-  throw({badarg, Other}).
-
+    throw({badarg, Other}).
 
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
 do([], _Args) ->
-  ok;
+    ok;
 do([{Mod, Fun} | T], Args) ->
-  Mod:Fun(Args),
-  do(T, Args);
+    Mod:Fun(Args),
+    do(T, Args);
 do([Fun | T], Args) when is_function(Fun) ->
-  Fun(Args),
-  do(T, Args).
-
+    Fun(Args),
+    do(T, Args).
 
 do_register_point(AppName, IntrospectionPoint, Fun) ->
     IntrospectionPoints = AppName:introspection_points(),
