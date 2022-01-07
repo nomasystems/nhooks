@@ -1,6 +1,6 @@
 # nintrospection
 
-An OTP application
+Erlang introspection application. It allows adding tasks dynamically to predefined introspection points.
 
 ## Status
 
