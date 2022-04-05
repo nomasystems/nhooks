@@ -1,19 +1,19 @@
-# nintrospection
+# nhooks
 
-Erlang introspection application. It allows adding tasks dynamically to predefined introspection points.
+Erlang hooks application. It allows adding tasks dynamically to predefined hooks.
 
 ## Status
 
-![GitHub branch checks state](https://img.shields.io/github/checks-status/nomasystems/nintrospection/main)
-![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/nomasystems/nintrospection/ci/main)
-![Coveralls branch](https://img.shields.io/coveralls/github/nomasystems/nintrospection/main)
+![GitHub branch checks state](https://img.shields.io/github/checks-status/nomasystems/nhooks/main)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/nomasystems/nhooks/ci/main)
+![Coveralls branch](https://img.shields.io/coveralls/github/nomasystems/nhooks/main)
 
 <!--
-![GitHub all releases](https://img.shields.io/github/downloads/nomasystems/nintrospection/total)
+![GitHub all releases](https://img.shields.io/github/downloads/nomasystems/nhooks/total)
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/nomasystems)
 
-![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/nomasystems/nintrospection)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/nomasystems/nintrospection)
+![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/nomasystems/nhooks)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/nomasystems/nhooks)
 -->
 
 ## Prerequisites
@@ -29,7 +29,7 @@ Code showing how to use the library.
 In your `rebar.config` file, add the dependency:
 ```erl
 {deps, [
-    {nintrospection, {git, "git@github.com:nomasystems/nintrospection.git", {branch, "main"}}}
+    {nhooks, {git, "git@github.com:nomasystems/nhooks.git", {branch, "main"}}}
 ]}.
 ```
 
@@ -40,7 +40,7 @@ Then, configure the library:
 
 ## Support
 
-Any doubt or suggestion? Please, read the [documentation](http://nomasystems.github.io/nintrospection) and check out [our issue tracker](https://github.com/nomasystems/nintrospection/issues).
+Any doubt or suggestion? Please, read the [documentation](http://nomasystems.github.io/nhooks) and check out [our issue tracker](https://github.com/nomasystems/nhooks/issues).
 
 ## Contributing
 

@@ -13,32 +13,25 @@
 %% limitations under the License
 -module(test_app).
 
-%%% INCLUDES
--include_lib("kernel/include/logger.hrl").
-
 %%% EXTERNAL EXPORTS
 -export([init/1, terminate/1]).
 
-%%% INTROSPECTION EXPORTS
--export([introspection_points/0]).
+%%% NHOOKS EXPORTS
+-export([hooks/0]).
 
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
 init(CounterRef) ->
-    nintrospection:do(test_app, init, [CounterRef]),
+    nhooks:do(test_app, init, [CounterRef]),
     ok.
 
 terminate(CounterRef) ->
-    nintrospection:do(test_app, terminate, [CounterRef]),
+    nhooks:do(test_app, terminate, [CounterRef]),
     ok.
 
-introspection_points() ->
+hooks() ->
     [
         init,
         terminate
     ].
-
-%%%-----------------------------------------------------------------------------
-%%% INTERNAL FUNCTIONS
-%%%-----------------------------------------------------------------------------
