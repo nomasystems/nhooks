@@ -1,5 +1,5 @@
-{application, nintrospection, [
-    {description, "Erlang introspection library"},
+{application, nhooks, [
+    {description, "Erlang hooks library"},
     {vsn, "0.0.1"},
     {registered, []},
     {applications, [kernel, stdlib]},
