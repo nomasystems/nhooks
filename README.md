@@ -4,17 +4,7 @@ Erlang hooks application. It allows adding tasks dynamically to predefined hooks
 
 ## Status
 
-![GitHub branch checks state](https://img.shields.io/github/checks-status/nomasystems/nhooks/main)
-![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/nomasystems/nhooks/ci/main)
-![Coveralls branch](https://img.shields.io/coveralls/github/nomasystems/nhooks/main)
-
-<!--
-![GitHub all releases](https://img.shields.io/github/downloads/nomasystems/nhooks/total)
-![GitHub Sponsors](https://img.shields.io/github/sponsors/nomasystems)
-
-![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/nomasystems/nhooks)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/nomasystems/nhooks)
--->
+![nthrottle](https://github.com/nomasystems/nhooks/actions/workflows/build.yml/badge.svg)
 
 ## Prerequisites
 
@@ -77,9 +67,9 @@ ok = nhooks:register_task(test_app, terminate, fun(Term) ->
     do_something_else(Term)
 end).
 
-%%% From now on when test_app executes the init and terminate hooks the registered tasks will be executed
-
 ```
+
+From now on when test_app executes the init and terminate hooks the registered tasks will be executed.
 
 ## Support
 
