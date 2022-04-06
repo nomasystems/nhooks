@@ -4,17 +4,7 @@ Erlang hooks application. It allows adding tasks dynamically to predefined hooks
 
 ## Status
 
-![GitHub branch checks state](https://img.shields.io/github/checks-status/nomasystems/nhooks/main)
-![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/nomasystems/nhooks/ci/main)
-![Coveralls branch](https://img.shields.io/coveralls/github/nomasystems/nhooks/main)
-
-<!--
-![GitHub all releases](https://img.shields.io/github/downloads/nomasystems/nhooks/total)
-![GitHub Sponsors](https://img.shields.io/github/sponsors/nomasystems)
-
-![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/nomasystems/nhooks)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/nomasystems/nhooks)
--->
+![nthrottle](https://github.com/nomasystems/nhooks/actions/workflows/build.yml/badge.svg)
 
 ## Prerequisites
 
@@ -22,9 +12,7 @@ Erlang hooks application. It allows adding tasks dynamically to predefined hooks
 ![Max. OTP version](https://img.shields.io/badge/max._OTP-24-blue)
 ![Min. rebar version](https://img.shields.io/badge/min._rebar-3.14.X-blue)
 
-## Usage
-
-Code showing how to use the library.
+## Configuration
 
 In your `rebar.config` file, add the dependency:
 ```erl
@@ -33,15 +21,56 @@ In your `rebar.config` file, add the dependency:
 ]}.
 ```
 
-Then, configure the library:
+## Usage example:
+
+Assuming there is a module named `test_app` that has one hook named `init` and another named `terminate`:
+
+```erl
+-module(test_app).
+
+%%% EXTERNAL EXPORTS
+-export([init/1, terminate/1]).
+
+%%% NHOOKS EXPORTS
+-export([hooks/0]).
+
+%%%-----------------------------------------------------------------------------
+%%% EXTERNAL EXPORTS
+%%%-----------------------------------------------------------------------------
+init(Term) ->
+    nhooks:do(?MODULE, init, [Term]),
+    ok.
+
+terminate(Term) ->
+    nhooks:do(?MODULE, terminate, [Term]),
+    ok.
+
+hooks() ->
+    [
+        init,
+        terminate
+    ].
+
+
 ```
-...
+
+You can register tasks to the defined hooks:
+
+```erl
+
+%%% Registering tasks in both hooks
+ok = nhooks:register_task(test_app, init, fun(Term) ->
+    do_something(Term)
+end).
+
+ok = nhooks:register_task(test_app, terminate, fun(Term) ->
+    do_something_else(Term)
+end).
+
 ```
+
+From now on when `test_app` executes the `init` and `terminate` hooks the registered tasks will be executed.
 
 ## Support
 
 Any doubt or suggestion? Please, read the [documentation](http://nomasystems.github.io/nhooks) and check out [our issue tracker](https://github.com/nomasystems/nhooks/issues).
-
-## Contributing
-
-Pull requests are welcome. Please read the [contributing guidelines](CONTRIBUTING.md) to know more about contribution.
