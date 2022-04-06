@@ -69,7 +69,7 @@ end).
 
 ```
 
-From now on when test_app executes the init and terminate hooks the registered tasks will be executed.
+From now on when `test_app` executes the `init` and `terminate` hooks the registered tasks will be executed.
 
 ## Support
 
