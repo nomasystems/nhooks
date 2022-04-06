@@ -23,7 +23,7 @@ In your `rebar.config` file, add the dependency:
 
 ## Usage example:
 
-Assuming there is an app named test_app that has one hook named init and another named terminate:
+Assuming there is a module named test_app that has one hook named init and another named terminate:
 
 ```erl
 -module(test_app).
