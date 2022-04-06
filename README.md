@@ -38,11 +38,11 @@ Assuming there is a module named test_app that has one hook named init and anoth
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
 init(Term) ->
-    nhooks:do(test_app, init, [Term]),
+    nhooks:do(?MODULE, init, [Term]),
     ok.
 
 terminate(Term) ->
-    nhooks:do(test_app, terminate, [Term]),
+    nhooks:do(?MODULE, terminate, [Term]),
     ok.
 
 hooks() ->
