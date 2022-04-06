@@ -1,6 +1,6 @@
 {application, nhooks, [
     {description, "Erlang hooks library"},
-    {vsn, "0.0.1"},
+    {vsn, "0.1.0"},
     {registered, []},
     {applications, [kernel, stdlib]},
     {env, []}
