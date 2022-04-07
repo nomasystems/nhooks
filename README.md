@@ -73,4 +73,4 @@ From now on when `test_app` executes the `init` and `terminate` hooks the regist
 
 ## Support
 
-Any doubt or suggestion? Please, read the [documentation](http://nomasystems.github.io/nhooks) and check out [our issue tracker](https://github.com/nomasystems/nhooks/issues).
+Any doubt or suggestion? Please check out [our issue tracker](https://github.com/nomasystems/nhooks/issues).
