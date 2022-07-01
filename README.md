@@ -21,7 +21,7 @@ In your `rebar.config` file, add the dependency:
 ]}.
 ```
 
-## Usage example:
+## Usage example
 
 Assuming there is a module named `test_app` that has one hook named `init` and another named `terminate`:
 
@@ -38,12 +38,10 @@ Assuming there is a module named `test_app` that has one hook named `init` and a
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
 init(Term) ->
-    nhooks:do(?MODULE, init, [Term]),
-    ok.
+    nhooks:do(?MODULE, init, [Term]).
 
 terminate(Term) ->
-    nhooks:do(?MODULE, terminate, [Term]),
-    ok.
+    nhooks:do(?MODULE, terminate, [Term]).
 
 hooks() ->
     [
@@ -70,6 +68,43 @@ end).
 ```
 
 From now on when `test_app` executes the `init` and `terminate` hooks the registered tasks will be executed.
+
+
+You can also register multiple tasks to any defined hook:
+
+```erl
+
+%%% Registering multiple tasks to same hook
+ok = nhooks:register_task(test_app, init, fun(Term) ->
+    do_something(Term)
+end).
+
+ok = nhooks:register_task(test_app, init, fun(Term) ->
+    do_something_else(Term)
+end).
+
+```
+
+And all will be executed when `test_app` executes the `init` hook.
+
+If you want to stop the subsequent tasks from executing, you can return `stop` or `{stop, Data}` from any task. For example:
+
+```erl
+
+%%% Stopping subsequent tasks in the same hook
+ok = nhooks:register_task(test_app, init, fun(Term) ->
+    do_something(Term),
+    {stop, {some, data}}
+end).
+
+ok = nhooks:register_task(test_app, init, fun(Term) ->
+    do_something_else(Term)
+end).
+
+```
+
+In this case, the second task won't be executed and the call to `nhooks:do/3` will return `{stopped, {some, data}}`.
+
 
 ## Support
 

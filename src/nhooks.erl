@@ -67,12 +67,16 @@ do(_AppName, _Hook, [], _Args) ->
     ok;
 do(AppName, Hook, [Task | T], Args) ->
     try
-        do_apply(Task, Args)
+        case do_apply(Task, Args) of
+            stop -> stopped;
+            {stop, Data} -> {stopped, Data};
+            _ -> do(AppName, Hook, T, Args)
+        end
     catch
         Error:Reason ->
-            log_error(AppName, Hook, Error, Reason)
-    end,
-    do(AppName, Hook, T, Args).
+            log_error(AppName, Hook, Error, Reason),
+            do(AppName, Hook, T, Args)
+    end.
 
 do_apply({Mod, Fun}, Args) ->
     erlang:apply(Mod, Fun, Args);
@@ -86,9 +90,10 @@ do_register_task(AppName, Hook, Task) ->
             ExistentTasks = persistent_term:get(
                 ?PERSISTENT_TERM_KEY(AppName, Hook), []
             ),
-            persistent_term:put(?PERSISTENT_TERM_KEY(AppName, Hook), [
-                Task | ExistentTasks
-            ]);
+            persistent_term:put(
+                ?PERSISTENT_TERM_KEY(AppName, Hook),
+                ExistentTasks ++ [Task]
+            );
         false ->
             erlang:error('non_existent_hook')
     end.
