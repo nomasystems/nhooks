@@ -23,12 +23,10 @@
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
 init(CounterRef) ->
-    nhooks:do(test_app, init, [CounterRef]),
-    ok.
+    nhooks:do(test_app, init, [CounterRef]).
 
 terminate(CounterRef) ->
-    nhooks:do(test_app, terminate, [CounterRef]),
-    ok.
+    nhooks:do(test_app, terminate, [CounterRef]).
 
 hooks() ->
     [

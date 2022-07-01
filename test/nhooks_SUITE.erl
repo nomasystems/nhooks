@@ -29,6 +29,9 @@ all() ->
         deregister_single_task,
         deregister_all_app_tasks,
         deregister_task_in_non_existent_hook,
+        do_empty,
+        do_until_stopped,
+        do_until_stopped_with_exceptions,
         execution_of_one_fun_per_hook,
         execution_of_one_mod_fun_per_hook,
         execution_of_several_tasks_per_hook,
@@ -134,6 +137,53 @@ deregister_task_in_non_existent_hook() ->
 
 deregister_task_in_non_existent_hook(_Conf) ->
     ok = nhooks:deregister_task(?APP_NAME, non_existent_hook).
+
+do_empty() ->
+    [{userdata, [{doc, "Tests do without tasks"}]}].
+
+do_empty(_Conf) ->
+    ok = ?APP_NAME:init(undefined).
+
+do_until_stopped() ->
+    [{userdata, [{doc, "Tests do until stopped"}]}].
+
+do_until_stopped(_Conf) ->
+    Counter = counters:new(1, []),
+    ok = nhooks:register_task(?APP_NAME, init, fun(CounterRef) ->
+        counters:add(CounterRef, 1, 1),
+        dont_stop
+    end),
+    ok = nhooks:register_task(?APP_NAME, init, fun(CounterRef) ->
+        counters:add(CounterRef, 1, 1),
+        {stop, {some, data}}
+    end),
+    ok = nhooks:register_task(?APP_NAME, init, fun(CounterRef) ->
+        counters:add(CounterRef, 1, 3),
+        shouldnt_execute
+    end),
+    {stopped, {some, data}} = ?APP_NAME:init(Counter),
+    2 = counters:get(Counter, 1),
+    ok.
+
+do_until_stopped_with_exceptions() ->
+    [{userdata, [{doc, "Tests do until stopped with some exceptions"}]}].
+
+do_until_stopped_with_exceptions(_Conf) ->
+    Counter = counters:new(1, []),
+    ok = nhooks:register_task(?APP_NAME, terminate, fun(CounterRef) ->
+        counters:add(CounterRef, 1, 1),
+        erlang:throw("some error")
+    end),
+    ok = nhooks:register_task(?APP_NAME, terminate, fun(CounterRef) ->
+        0 = counters:add(CounterRef, 1, 1)
+    end),
+    ok = nhooks:register_task(?APP_NAME, terminate, fun(CounterRef) ->
+        counters:add(CounterRef, 1, 1),
+        stop
+    end),
+    stopped = ?APP_NAME:terminate(Counter),
+    3 = counters:get(Counter, 1),
+    ok.
 
 execution_of_one_fun_per_hook() ->
     [
