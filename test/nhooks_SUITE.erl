@@ -25,11 +25,14 @@
 all() ->
     [
         register,
+        register_task_badarg,
         register_task_in_a_non_existent_hook,
         deregister_single_task,
         deregister_all_app_tasks,
         deregister_task_in_non_existent_hook,
         do_empty,
+        do_error,
+        do_error_no_log,
         do_until_stopped,
         do_until_stopped_with_exceptions,
         execution_of_one_fun_per_hook,
@@ -84,6 +87,12 @@ register(_Conf) ->
     true = [] /= nhooks:consult_tasks(?APP_NAME, terminate),
     true = [] /= nhooks:consult_tasks(?APP_NAME, init),
     ok.
+
+register_task_badarg() ->
+    [{userdata, [{doc, "Tests the registration of a task without a compatible argument"}]}].
+
+register_task_badarg(_Conf) ->
+    {badarg, bad_argument} = (catch nhooks:register_task(?APP_NAME, init, bad_argument)).
 
 register_task_in_a_non_existent_hook() ->
     [
@@ -143,6 +152,26 @@ do_empty() ->
 
 do_empty(_Conf) ->
     ok = ?APP_NAME:init(undefined).
+
+do_error() ->
+    [{userdata, [{doc, "Tests do with an erroring task"}]}].
+
+do_error(_Conf) ->
+    ok = nhooks:register_task(?APP_NAME, init, fun(_) ->
+        erlang:throw("some error")
+    end),
+    ok = ?APP_NAME:init(undefined).
+
+do_error_no_log() ->
+    [{userdata, [{doc, "Tests do with an erroring task and logs disabled"}]}].
+
+do_error_no_log(_Conf) ->
+    ok = logger:set_module_level(nhooks, none),
+    ok = nhooks:register_task(?APP_NAME, init, fun(_) ->
+        erlang:throw("some error")
+    end),
+    ok = ?APP_NAME:init(undefined),
+    ok = logger:unset_module_level(nhooks).
 
 do_until_stopped() ->
     [{userdata, [{doc, "Tests do until stopped"}]}].
