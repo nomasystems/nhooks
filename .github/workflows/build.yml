@@ -12,9 +12,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - image: erlang:22
-          - image: erlang:23
           - image: erlang:24
+          - image: erlang:25
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.image }}

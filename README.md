@@ -8,8 +8,8 @@ Erlang hooks application. It allows adding tasks dynamically to predefined hooks
 
 ## Prerequisites
 
-![Min. OTP version](https://img.shields.io/badge/min._OTP-22-blue)
-![Max. OTP version](https://img.shields.io/badge/max._OTP-24-blue)
+![Min. OTP version](https://img.shields.io/badge/min._OTP-24-blue)
+![Max. OTP version](https://img.shields.io/badge/max._OTP-25-blue)
 ![Min. rebar version](https://img.shields.io/badge/min._rebar-3.14.X-blue)
 
 ## Configuration
