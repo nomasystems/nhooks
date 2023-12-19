@@ -35,6 +35,7 @@ all() ->
         do_error_no_log,
         do_until_stopped,
         do_until_stopped_with_exceptions,
+        do_until_stopped_with_priority,
         execution_of_one_fun_per_hook,
         execution_of_one_mod_fun_per_hook,
         execution_of_several_tasks_per_hook,
@@ -211,6 +212,40 @@ do_until_stopped_with_exceptions(_Conf) ->
         stop
     end),
     stopped = ?APP_NAME:terminate(Counter),
+    3 = counters:get(Counter, 1),
+    ok.
+
+do_until_stopped_with_priority() ->
+    [{userdata, [{doc, "Tests do until stopped with priority"}]}].
+
+do_until_stopped_with_priority(_Conf) ->
+    Counter = counters:new(1, []),
+    ok = nhooks:register_task(
+        ?APP_NAME,
+        init,
+        fun(CounterRef) ->
+            counters:add(CounterRef, 1, 1)
+        end,
+        0
+    ),
+    ok = nhooks:register_task(
+        ?APP_NAME,
+        init,
+        fun(CounterRef) ->
+            counters:add(CounterRef, 1, 1),
+            {stop, {some, data}}
+        end,
+        5
+    ),
+    ok = nhooks:register_task(
+        ?APP_NAME,
+        init,
+        fun(CounterRef) ->
+            counters:add(CounterRef, 1, 1)
+        end,
+        3
+    ),
+    {stopped, {some, data}} = ?APP_NAME:init(Counter),
     3 = counters:get(Counter, 1),
     ok.
 

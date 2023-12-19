@@ -105,6 +105,16 @@ end).
 
 In this case, the second task won't be executed and the call to `nhooks:do/3` will return `{stopped, {some, data}}`.
 
+All tasks are registered with a default priority of `0` and then executed from lowest to highest priority. That priority can be passed as the last argument of `nhooks:registar_task/4`:
+
+```erl
+
+ok = nhooks:register_task(test_app, init, fun(Term) -> first, -1).
+ok = nhooks:register_task(test_app, init, fun(Term) -> second end).
+ok = nhooks:register_task(test_app, init, fun(Term) -> third end, 5).
+
+```
+
 
 ## Support
 
