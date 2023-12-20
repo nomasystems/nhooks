@@ -109,9 +109,9 @@ All tasks are registered with a default priority of `0` and then executed from l
 
 ```erl
 
-ok = nhooks:register_task(test_app, init, fun(Term) -> first, -1).
-ok = nhooks:register_task(test_app, init, fun(Term) -> second end).
-ok = nhooks:register_task(test_app, init, fun(Term) -> third end, 5).
+ok = nhooks:register_task(test_app, init, fun(_Term) -> first end, -1).
+ok = nhooks:register_task(test_app, init, fun(_Term) -> second end).
+ok = nhooks:register_task(test_app, init, fun(_Term) -> third end, 5).
 
 ```
 
