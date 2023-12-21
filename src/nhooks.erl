@@ -20,6 +20,7 @@
 -export([
     do/3,
     register_task/3,
+    register_task/4,
     deregister_task/2,
     deregister_app_tasks/1,
     consult_tasks/2,
@@ -27,6 +28,7 @@
 ]).
 
 %%%% MACROS
+-define(DEFAULT_PRIORITY, 0).
 -define(PERSISTENT_TERM_KEY(AppName, Hook),
     {nhooks, AppName, Hook}
 ).
@@ -38,11 +40,14 @@ do(AppName, Hook, Args) ->
     Hooks = persistent_term:get(?PERSISTENT_TERM_KEY(AppName, Hook), []),
     do(AppName, Hook, Hooks, Args).
 
-register_task(AppName, Hook, Task) when is_function(Task) ->
-    do_register_task(AppName, Hook, Task);
-register_task(AppName, Hook, {M, F} = Task) when is_atom(M), is_atom(F) ->
-    do_register_task(AppName, Hook, Task);
-register_task(_AppName, _Hook, Other) ->
+register_task(AppName, Hook, Task) ->
+    register_task(AppName, Hook, Task, ?DEFAULT_PRIORITY).
+
+register_task(AppName, Hook, Task, Priority) when is_function(Task) ->
+    do_register_task(AppName, Hook, Task, Priority);
+register_task(AppName, Hook, {M, F} = Task, Priority) when is_atom(M), is_atom(F) ->
+    do_register_task(AppName, Hook, Task, Priority);
+register_task(_AppName, _Hook, Other, _Priority) ->
     throw({badarg, Other}).
 
 deregister_task(AppName, Hook) ->
@@ -65,7 +70,7 @@ consult_app_tasks(AppName) ->
 %%%-----------------------------------------------------------------------------
 do(_AppName, _Hook, [], _Args) ->
     ok;
-do(AppName, Hook, [Task | T], Args) ->
+do(AppName, Hook, [{_Priority, Task} | T], Args) ->
     try
         case do_apply(Task, Args) of
             stop -> stopped;
@@ -83,17 +88,15 @@ do_apply({Mod, Fun}, Args) ->
 do_apply(Fun, Args) when is_function(Fun) ->
     erlang:apply(Fun, Args).
 
-do_register_task(AppName, Hook, Task) ->
+do_register_task(AppName, Hook, Task, Priority) ->
     Hooks = AppName:hooks(),
     case lists:member(Hook, Hooks) of
         true ->
-            ExistentTasks = persistent_term:get(
-                ?PERSISTENT_TERM_KEY(AppName, Hook), []
-            ),
-            persistent_term:put(
-                ?PERSISTENT_TERM_KEY(AppName, Hook),
-                ExistentTasks ++ [Task]
-            );
+            Key = ?PERSISTENT_TERM_KEY(AppName, Hook),
+            ExistentTasks = persistent_term:get(Key, []),
+            NewTask = {Priority, Task},
+            SortedTasks = lists:merge(fun({X, _}, {Y, _}) -> X =< Y end, ExistentTasks, [NewTask]),
+            persistent_term:put(Key, SortedTasks);
         false ->
             erlang:error('non_existent_hook')
     end.
