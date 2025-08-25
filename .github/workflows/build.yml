@@ -1,4 +1,5 @@
-name: ci
+name: CI
+
 on:
   push:
     branches:
@@ -9,52 +10,48 @@ on:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - image: erlang:24
-          - image: erlang:25
-          - image: erlang:26
-    runs-on: ubuntu-latest
-    container:
-      image: ${{ matrix.image }}
-      options: "--entrypoint /bin/bash"
-
+        combo:
+        - otp-version: '25.2'
+          rebar3-version: '3.18.0'
+        - otp-version: '26.2'
+          rebar3-version: '3.23.0'
+        - otp-version: '27.2'
+          rebar3-version: '3.24.0'
+        - otp-version: '28.0'
+          rebar3-version: '3.25.0'
     steps:
-      # Setup
-      - name: Checkout
-        uses: actions/checkout@v3
-      - uses: webfactory/ssh-agent@v0.7.0
+      - uses: actions/checkout@v4
+
+      - uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # Inspect rebar3 version
-      - name: Rebar version
-        run: rebar3 --version
-
-      # PRE Checks
-      - name: Checks
-        run: rebar3 check
-
-      # Compile
-      - name: Compile
-        run: rebar3 compile
-
-      # Tests
-      - name: Run tests
-        run: rebar3 test_ci
-      - name: Store test logs
-        uses: actions/upload-artifact@v1
-        if: always()
+      - uses: erlef/setup-beam@v1.18
         with:
-          name: ct-logs
-          path: _build/test/logs
+          otp-version: ${{ matrix.combo.otp-version }}
+          rebar3-version: ${{ matrix.combo.rebar3-version }}
 
-      # Cover reports
+      - uses: actions/cache@v4
+        id: rebar3-cache
+        with:
+          path: |
+            ~/.cache/rebar3
+            _build
+          key: ${{ runner.os }}-${{ runner.arch }}-${{ matrix.combo.otp-version }}-${{ matrix.combo.rebar3-version }}-${{ hashFiles('rebar.lock') }}
+
+      - run: rebar3 check
+
+      - run: rebar3 compile
+
+      - run: rebar3 test_ci
+
       - name: Create Cover Reports
         run: rebar3 cover
 
-      - name: Publish Test Report
-        uses: nomasystems/action-junit-report@v2
+      - uses: test-summary/action@v2
+        if: always()
         with:
-          report_paths: '_build/test/logs/**/report.xml'
+          paths: '_build/test/logs/**/report.xml'
